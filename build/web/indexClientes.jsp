@@ -34,11 +34,24 @@
         </div>
         <div class="container">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-2">
                     <button class="btn btn-info" type="button" 
                             onclick="abrirModal('agregar', '', '', '', '', '', '', '', '', '', '', '')">
                         Agregar cliente
                     </button>
+                </div>
+                <div class="col-sm-10">
+                    <form class="form-inline" action="ClienteServlet" method="post">
+                        <input type="hidden" name="accion" value="buscar" />
+                        <label class="sr-only" for="buscarCliente">Nombre</label>
+                        <input type="text" class="form-control" id="buscarCliente" 
+                               placeholder="Nombre" name="buscarCliente">
+                        &nbsp;
+                        &nbsp;
+                        <button class="btn btn-primary" type="submit">
+                            Buscar
+                        </button>
+                    </form>
                 </div>
             </div>
             <div class="row contenedor">

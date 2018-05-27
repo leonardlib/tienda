@@ -34,11 +34,24 @@
         </div>
         <div class="container">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-2">
                     <button class="btn btn-info" type="button" 
                             onclick="abrirModal('agregar', '', '', '', '', '')">
                         Agregar producto
                     </button>
+                </div>
+                <div class="col-sm-10">
+                    <form class="form-inline" action="ProductoServlet" method="post">
+                        <input type="hidden" name="accion" value="buscar" />
+                        <label class="sr-only" for="buscarProducto">Nombre</label>
+                        <input type="text" class="form-control" id="buscarProducto" 
+                               placeholder="Nombre" name="buscarProducto">
+                        &nbsp;
+                        &nbsp;
+                        <button class="btn btn-primary" type="submit">
+                            Buscar
+                        </button>
+                    </form>
                 </div>
             </div>
             <div class="row contenedor">
@@ -67,13 +80,13 @@
                                     <td class="text-center">
                                         <button class="btn btn-secondary" type="button" 
                                                 onclick="abrirModal(
-                                                    'editar',
-                                                    '<%= producto.getNombre()%>',
-                                                    '<%= producto.getDescripcion()%>',
-                                                    '<%= producto.getCantidad()%>',
-                                                    '<%= producto.getPrecio()%>',
-                                                    '<%= producto.getId()%>'
-                                                )">
+                                                                'editar',
+                                                                '<%= producto.getNombre()%>',
+                                                                '<%= producto.getDescripcion()%>',
+                                                                '<%= producto.getCantidad()%>',
+                                                                '<%= producto.getPrecio()%>',
+                                                                '<%= producto.getId()%>'
+                                                                )">
                                             Editar
                                         </button>
                                     </td>

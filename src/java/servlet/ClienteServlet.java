@@ -56,6 +56,7 @@ public class ClienteServlet extends HttpServlet {
             String accion = request.getParameter("accion");
             HttpSession sesion = request.getSession();
             System.out.println("Acción clientes: " + accion);
+            List<Cliente> listaClientes = controladorCliente.findClienteEntities();
             
             if (accion.equalsIgnoreCase("eliminar")) {
                 int idCliente = Integer.parseInt(request.getParameter("id"));
@@ -65,6 +66,8 @@ public class ClienteServlet extends HttpServlet {
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
+                
+                listaClientes = controladorCliente.findClienteEntities();
             } else if (accion.equalsIgnoreCase("agregar") || accion.equalsIgnoreCase("editar")) {
                 String nombre = request.getParameter("nombre");
                 String apellidos = request.getParameter("apellidos");
@@ -126,9 +129,14 @@ public class ClienteServlet extends HttpServlet {
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
+                
+                listaClientes = controladorCliente.findClienteEntities();
+            } else if (accion.equalsIgnoreCase("buscar")) {
+                String nombre = request.getParameter("buscarCliente");
+                
+                listaClientes = controladorCliente.buscarPorNombre(nombre);
             }
-
-            List<Cliente> listaClientes = controladorCliente.findClienteEntities();
+            
             sesion.setAttribute("listaClientes", listaClientes);
             RequestDispatcher vista = request.getRequestDispatcher("indexClientes.jsp");
             vista.forward(request, response);

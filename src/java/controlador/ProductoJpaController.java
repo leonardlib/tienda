@@ -204,6 +204,25 @@ public class ProductoJpaController implements Serializable {
             //em.close();
         }
     }
+    
+    public List<Producto> buscarPorNombre(String nombre) {
+        EntityManager em = this.emf.createEntityManager();
+        List<Producto> lista = null;
+        
+        utx.begin();
+        try {
+            String query = "SELECT * FROM producto p WHERE p.nombre LIKE '%"+ nombre +"%'";
+            System.out.println(query);
+            Query consulta = em.createNativeQuery(query, Producto.class);
+            lista = consulta.getResultList();
+            utx.commit();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            utx.rollback();
+        }
+        
+        return lista;
+    }
 
     public int getProductoCount() {
         EntityManager em = getEntityManager();

@@ -6,9 +6,7 @@ import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -50,6 +48,7 @@ public class ProductoServlet extends HttpServlet {
             String accion = request.getParameter("accion");
             HttpSession sesion = request.getSession();
             System.out.println("Acción productos: " + accion);
+            List<Producto> listaProductos = controladorProducto.findProductoEntities();
 
             if (accion.equalsIgnoreCase("eliminar")) {
                 int idProducto = Integer.parseInt(request.getParameter("id"));
@@ -59,6 +58,8 @@ public class ProductoServlet extends HttpServlet {
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
+                
+                listaProductos = controladorProducto.findProductoEntities();
             } else if (accion.equalsIgnoreCase("agregar") || accion.equalsIgnoreCase("editar")) {
                 String nombre = request.getParameter("nombre");
                 String descripcion = request.getParameter("descripcion");
@@ -96,9 +97,14 @@ public class ProductoServlet extends HttpServlet {
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
+                
+                listaProductos = controladorProducto.findProductoEntities();
+            } else if (accion.equalsIgnoreCase("buscar")) {
+                String nombre = request.getParameter("buscarProducto");
+                
+                listaProductos = controladorProducto.buscarPorNombre(nombre);
             }
 
-            List<Producto> listaProductos = controladorProducto.findProductoEntities();
             sesion.setAttribute("listaProductos", listaProductos);
             RequestDispatcher vista = request.getRequestDispatcher("indexProductos.jsp");
             vista.forward(request, response);

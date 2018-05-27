@@ -234,6 +234,25 @@ public class ClienteJpaController implements Serializable {
             //em.close();
         }
     }
+    
+    public List<Cliente> buscarPorNombre(String nombre) {
+        EntityManager em = this.emf.createEntityManager();
+        List<Cliente> lista = null;
+        
+        utx.begin();
+        try {
+            String query = "SELECT * FROM cliente c WHERE c.nombre LIKE '%"+ nombre +"%'";
+            System.out.println(query);
+            Query consulta = em.createNativeQuery(query, Cliente.class);
+            lista = consulta.getResultList();
+            utx.commit();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            utx.rollback();
+        }
+        
+        return lista;
+    }
 
     public int getClienteCount() {
         EntityManager em = getEntityManager();

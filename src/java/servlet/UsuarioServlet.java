@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import modelo.Producto;
 import modelo.TipoUsuario;
 import modelo.Usuario;
 
@@ -24,6 +23,7 @@ import modelo.Usuario;
  * @author leonardolirabecerra
  */
 public class UsuarioServlet extends HttpServlet {
+
     private static EntityManagerFactory emf;
 
     /**
@@ -42,23 +42,24 @@ public class UsuarioServlet extends HttpServlet {
             emf = Persistence.createEntityManagerFactory("CRUDTiendaPU");
             UsuarioJpaController controladorUsuario = new UsuarioJpaController(emf);
             TipoUsuarioJpaController controladorTipo = new TipoUsuarioJpaController(emf);
-            
+
             String accion = request.getParameter("accion");
             HttpSession sesion = request.getSession();
             RequestDispatcher vista = request.getRequestDispatcher("indexUsuarios.jsp");
+            List<Usuario> listaUsuarios = controladorUsuario.findUsuarioEntities();
 
             if (accion.equalsIgnoreCase("ingresar")) {
                 String nombre = request.getParameter("nombre");
                 String pass = request.getParameter("password");
 
                 Usuario usuario = null;
-                
+
                 try {
                     usuario = controladorUsuario.validarUsuario(nombre, pass);
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
-                
+
                 vista = request.getRequestDispatcher("ProductoServlet");
 
                 if (usuario != null) {
@@ -67,6 +68,8 @@ public class UsuarioServlet extends HttpServlet {
                     sesion.setAttribute("usuario", usuario);
                     sesion.setAttribute("tipoUsuario", usuario.getIdTipoUsuario().getId());
                 }
+
+                listaUsuarios = controladorUsuario.findUsuarioEntities();
             } else if (accion.equalsIgnoreCase("eliminar")) {
                 int idUsuario = Integer.parseInt(request.getParameter("id"));
 
@@ -75,11 +78,13 @@ public class UsuarioServlet extends HttpServlet {
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
+
+                listaUsuarios = controladorUsuario.findUsuarioEntities();
             } else if (accion.equalsIgnoreCase("agregar") || accion.equalsIgnoreCase("editar")) {
                 String nombre = request.getParameter("nombre");
                 String password = request.getParameter("password");
                 int idTipo = Integer.parseInt(request.getParameter("tipo-usuario"));
-                
+
                 Usuario usuario;
                 TipoUsuario tipoUsuario = controladorTipo.findTipoUsuario(idTipo);
 
@@ -93,7 +98,7 @@ public class UsuarioServlet extends HttpServlet {
                 usuario.setNombre(nombre);
                 usuario.setPassword(password);
                 usuario.setIdTipoUsuario(tipoUsuario);
-                
+
                 Timestamp fechaActual = new Timestamp(new Date().getTime());
                 Usuario usuarioModificador = (Usuario) request.getSession().getAttribute("usuario");
 
@@ -101,25 +106,30 @@ public class UsuarioServlet extends HttpServlet {
                     if (accion.equalsIgnoreCase("agregar")) {
                         usuario.setFechaCreacion(fechaActual);
                         usuario.setIdUsuarioCreacion(usuarioModificador);
-                        
+
                         controladorUsuario.create(usuario);
                     } else {
                         usuario.setFechaModificacion(fechaActual);
                         usuario.setIdUsuarioModificacion(usuarioModificador);
-                        
+
                         controladorUsuario.edit(usuario);
                     }
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
+                
+                listaUsuarios = controladorUsuario.findUsuarioEntities();
             } else if (accion.equalsIgnoreCase("salir")) {
                 sesion.removeAttribute("nombre");
                 sesion.removeAttribute("usuario");
                 sesion.removeAttribute("tipoUsuario");
                 vista = request.getRequestDispatcher("index.jsp");
+            } else if (accion.equalsIgnoreCase("buscar")) {
+                String nombre = request.getParameter("buscarUsuario");
+                
+                listaUsuarios = controladorUsuario.buscarPorNombre(nombre);
             }
 
-            List<Usuario> listaUsuarios = controladorUsuario.findUsuarioEntities();
             List<TipoUsuario> listaTipos = controladorTipo.findTipoUsuarioEntities();
             sesion.setAttribute("listaUsuarios", listaUsuarios);
             sesion.setAttribute("listaTipos", listaTipos);

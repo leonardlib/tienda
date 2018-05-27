@@ -554,6 +554,25 @@ public class UsuarioJpaController implements Serializable {
         }
     }
     
+    public List<Usuario> buscarPorNombre(String nombre) {
+        EntityManager em = this.emf.createEntityManager();
+        List<Usuario> lista = null;
+        
+        utx.begin();
+        try {
+            String query = "SELECT * FROM usuario u WHERE u.nombre LIKE '%"+ nombre +"%'";
+            System.out.println(query);
+            Query consulta = em.createNativeQuery(query, Usuario.class);
+            lista = consulta.getResultList();
+            utx.commit();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            utx.rollback();
+        }
+        
+        return lista;
+    }
+    
     public Usuario validarUsuario(String nombre, String password) throws NotSupportedException, SystemException {
         EntityManager em = emf.createEntityManager();
         Usuario usuario = null;
